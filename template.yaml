@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Resume Project — Automated EC2 Deployment using CloudFormation and AWS CLI"
+
+Resources:
+  ProjectSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Enable SSH and HTTP for project demo"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Owner
+          Value: Chakri 
+        - Key: Project
+          Value: CFN-EC2-CLI
+        - Key: Environment
+          Value: Dev
+
+  ProjectEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      ImageId: ami-068c0051b15cdb816  # replace with your real AMI ID
+      KeyName: chakri@018706            # replace with your AWS key pair name
+      SecurityGroupIds:
+        - Ref: ProjectSecurityGroup
+      Tags:
+        - Key: Name
+          Value: CFN-CLI-EC2
+        - Key: Owner
+          Value: Chakri
+        - Key: Project
+          Value: Cloud-Automation
+
+Outputs:
+  EC2InstanceID:
+    Description: "Deployed EC2 Instance ID"
+    Value: !Ref ProjectEC2Instance
+
+  EC2PublicIP:
+    Description: "EC2 Public IP Address"
+    Value: !GetAtt ProjectEC2Instance.PublicIp
